@@ -6,6 +6,16 @@ const passportSetup = require("./config/passport-setup");
 const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const cors = require("cors");
+const teamup_route = require("./routes/teamuproutes");
+
+
+// for parsing application/json
+app.use(express.json()); 
+
+// for parsing application/xwww-
+app.use(express.urlencoded({ extended: true })); 
+
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -44,7 +54,7 @@ app.use(express.static("public"));
 
 app.use(
   cookieSession({
-    maxAge: 60 * 1000,
+    maxAge: 60 * 1000 * 5,
     keys: ["abcdefghijklmopqrstuvwxyz"],
   })
 );
@@ -69,6 +79,8 @@ const ensureGuest = (req, res, next) => {
   }
 };
 
+app.use("/teamup", teamup_route);
+
 app.get("/", ensureGuest, (req, res) => {
   res.redirect("/login");
 });
@@ -81,7 +93,7 @@ app.get(
   "/auth",
   passport.authenticate("google", {
     successRedirect: "http://localhost:3000/home",
-    failureRedirect: "/login",
+    failureRedirect: "http://localhost:3000/login",
   })
 );
 
@@ -91,10 +103,10 @@ app.get("/home", ensureAuth, (req, res) => {
   res.send({ mail: "jhde@iitgoa.ac.in" });
 });
 
-app.get("/allowcors", (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.send("hi");
-});
+// app.get("/allowcors", (req, res) => {
+//   res.set("Access-Control-Allow-Origin", "*");
+//   res.send("hi");
+// });
 
 app.get("/checkauth", ensureAuth, (req, res) => {
   res.sendStatus(200);
@@ -114,6 +126,13 @@ app.get(
 
 //     res.redirect('/home');
 // })
+
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.redirect('home');
+});
+
+
 app.get("/teamup", ensureAuth, (req, res) => {
   res.send({
     role: "sde",
@@ -128,6 +147,9 @@ app.get("/internship", ensureAuth, (req, res) => {
   });
 });
 
+
 app.listen(4444, () => {
   console.log("Listening on port 4444");
 });
+
+module.exports = ensureAuth;
