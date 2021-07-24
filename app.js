@@ -8,13 +8,11 @@ const cookieSession = require("cookie-session");
 const cors = require("cors");
 const teamup_route = require("./routes/teamuproutes");
 
-
 // for parsing application/json
-app.use(express.json()); 
+app.use(express.json());
 
 // for parsing application/xwww-
-app.use(express.urlencoded({ extended: true })); 
-
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
@@ -54,7 +52,7 @@ app.use(express.static("public"));
 
 app.use(
   cookieSession({
-    maxAge: 60 * 1000 * 5,
+    maxAge: 60 * 1000 * 30,
     keys: ["abcdefghijklmopqrstuvwxyz"],
   })
 );
@@ -128,10 +126,9 @@ app.get(
 // })
 
 app.get("/logout", (req, res) => {
-    req.logout();
-    res.redirect('home');
+  req.logout();
+  res.redirect("home");
 });
-
 
 app.get("/teamup", ensureAuth, (req, res) => {
   res.send({
@@ -146,7 +143,6 @@ app.get("/internship", ensureAuth, (req, res) => {
     company: "amazon",
   });
 });
-
 
 app.listen(4444, () => {
   console.log("Listening on port 4444");
